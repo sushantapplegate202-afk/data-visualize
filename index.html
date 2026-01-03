@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 स्मार्ट चार्ट डैशबोर्ड - Complete (Motor + Prism + Todo)</title>
+    <style>
+        /* CSS Variables for Easy Theme Management */
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #ff6b6b;
+            --bg-light: #f8f9ff;
+            --text-dark: #2d3748;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: var(--text-dark);
+        }
+
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        /* Header Style */
+        .header {
+            text-align: center; color: white; margin-bottom: 25px; padding: 20px;
+            background: rgba(255,255,255,0.15); backdrop-filter: blur(15px);
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .instruction { font-size: 1.1em; opacity: 0.9; }
+
+        /* Input Controls Section */
+        .controls {
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); margin-bottom: 25px;
+        }
+
+        .input-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .input-group {
+            background: var(--bg-light); padding: 12px; border-radius: 12px;
+            border: 2px solid #eee;
+        }
+
+        .input-group label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        
+        .input-row { display: flex; gap: 8px; }
+
+        input {
+            width: 100%; padding: 10px; border: 2px solid #ddd;
+            border-radius: 8px; font-size: 14px; outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        /* Charts Layout */
+        .charts-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 25px;
+        }
+
+        .chart-card {
+            background: white; padding: 20px; border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .chart-header {
+            text-align: center; font-weight: 900; padding: 10px;
+            border-radius: 10px; margin-bottom: 18px; color: white;
+            text-transform: uppercase; font-size: 14px;
+            position: relative;
+        }
+
+        /* All Header Colors */
+        .bg-column { background: #4facfe; }
+        .bg-bar { background: #667eea; }
+        .bg-histogram { background: #f093fb; }
+        .bg-pie { background: #ff6b6b; }
+        .bg-line { background: #00d2d3; }
+        .bg-funnel { background: #ff9ff3; }
+        .bg-wave { background: #00b894; }
+        .bg-prism { 
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57); 
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+        }
+        .bg-todo {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            overflow: hidden;
+        }
+        .bg-motor {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .chart-area {
+            height: 320px; position: relative; 
+            border-left: 4px solid #333;
+            border-bottom: 4px solid #333; 
+            margin: 18px 10px 35px 35px;
+            display: flex; align-items: flex-end; justify-content: space-around;
+            padding: 0 10px;
+        }
+
+        /* Bar Items */
+        .bar-item {
+            flex: 1; margin: 0 8px; position: relative;
+            transition: height 1s ease-in-out;
+            border-radius: 6px 6px 0 0;
+            min-height: 5px;
+        }
+
+        .val-popup {
+            position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; font-weight: bold; background: #333; color: white;
+            padding: 2px 5px; border-radius: 4px;
+        }
+
+        .x-label {
+            position: absolute; bottom: -32px; left: 50%; transform: translateX(-50%);
+            font-size: 13px; font-weight: bold; color: #555;
+        }
+
+        /* Line Chart */
+        .line-container {
+            height: 320px; position: relative; 
+            margin: 18px 10px 35px 35px;
+        }
+        .lines-svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        /* Funnel Chart */
+        .funnel-container {
+            display: flex; flex-direction: column; align-items: center; 
+            height: 320px; justify-content: space-around; padding-top: 20px;
+        }
+        .funnel-stage {
+            width: 75%; position: relative; margin: 6px 0;
+        }
+        .funnel-bar {
+            height: 35px; border-radius: 18px; position: relative;
+            display: flex; align-items: center; padding: 0 12px;
+            color: white; font-weight: bold; font-size: 13px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Wave Chart */
+        .wave-container {
+            height: 320px; position: relative; 
+            margin: 18px 10px 35px 35px;
+            overflow: hidden;
+        }
+        .wave-layer {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 100%; display: flex;
+        }
+        .wave-segment {
+            flex: 1; position: relative; height: 100%;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            margin: 0 2px;
+        }
+
+        /* Pie Chart */
+        .pie-box {
+            display: flex; flex-direction: column; align-items: center; gap: 18px;
+            height: 320px; justify-content: center;
+        }
+        
+        .pie-disk {
+            width: 220px; height: 220px; border-radius: 50%;
+            transition: 1s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .leg-item { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* PRISM */
+        .prism-container {
+            height: 320px; 
+            position: relative; 
+            margin: 18px 10px 35px 35px;
+            perspective: 1000px;
+            cursor: grab;
+        }
+        .prism-container:active { cursor: grabbing; }
+        .prism-3d {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 120px; height: 120px;
+            transform-style: preserve-3d;
+            transform: translate(-50%, -50%) rotateX(20deg) rotateY(30deg);
+            transition: transform 0.3s ease;
+        }
+        .prism-container:hover .prism-3d {
+            transform: translate(-50%, -50%) rotateX(10deg) rotateY(45deg);
+        }
+        .prism-face {
+            position: absolute;
+            width: 120px; height: 120px;
+            border: 3px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(10px);
+        }
+        .front { 
+            transform: rotateY(0deg) translateZ(60px);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .back { 
+            transform: rotateY(180deg) translateZ(60px);
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+        .right { 
+            transform: rotateY(90deg) translateZ(60px);
+            background: linear-gradient(135deg, #4facfe, #00d2d3);
+            width: 126px; height: 126px; margin-left: -3px;
+        }
+        .left { 
+            transform: rotateY(-90deg) translateZ(60px);
+            background: linear-gradient(135deg, #f093fb, #ff9ff3);
+            width: 126px; height: 126px; margin-left: -3px;
+        }
+        .top { 
+            transform: rotateX(90deg) translateZ(60px);
+            background: linear-gradient(135deg, #54a0ff, #5f27cd);
+            height: 126px; margin-top: -3px;
+        }
+        .bottom { 
+            transform: rotateX(-90deg) translateZ(60px);
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            height: 126px; margin-top: -3px;
+        }
+        .prism-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 160px; height: 160px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102,126,234,0.4) 0%, transparent 70%);
+            animation: glowPulse 2s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+
+        /* TODO LIST */
+        .todo-container {
+            height: 320px;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .todo-item:hover {
+            transform: translateX(5px);
+            background: rgba(17, 153, 142, 0.05);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+        .todo-check {
+            width: 20px; height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: bold;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .done .todo-check {
+            background: #11998e;
+            color: white;
+            border-color: #11998e;
+            animation: checkBounce 0.5s ease;
+        }
+        .active .todo-check {
+            border-color: #11998e;
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            box-shadow: 0 0 10px rgba(17, 153, 142, 0.5);
+        }
+        .success .todo-check {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            font-size: 14px;
+            animation: starTwinkle 1.5s infinite;
+        }
+        .todo-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.4;
+        }
+        .glow-badge {
+            position: absolute;
+            top: 8px; right: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        .emoji { margin-right: 8px; font-size: 18px; }
+
+        /* MOTOR ANIMATION */
+        .motor-container {
+            height: 320px;
+            position: relative;
+            margin: 18px 10px 35px 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.9) 0%, transparent 70%);
+        }
+        .motor-circle {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+        .motor-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160px;
+            height: 160px;
+            margin: -80px 0 0 -80px;
+            border: 8px solid transparent;
+            border-top: 8px solid #3498db;
+            border-right: 8px solid #2980b9;
+            border-radius: 50%;
+            animation: motorSpin 1.5s linear infinite;
+        }
+        .motor-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90px;
+            height: 90px;
+            margin: -45px 0 0 -45px;
+            background: radial-gradient(circle, #1a1a2e 0%, #16213e 70%, #0f0f23 100%);
+            border-radius: 50%;
+            border: 6px solid #34495e;
+            box-shadow: 
+                inset 0 0 30px rgba(52, 73, 94, 0.8),
+                0 0 50px rgba(52, 152, 219, 0.6);
+            animation: corePulse 2s ease-in-out infinite alternate;
+        }
+        .motor-core::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            background: radial-gradient(circle, #3498db 0%, #2980b9 100%);
+            border-radius: 50%;
+            animation: innerSpin 3s linear infinite;
+        }
+        .motor-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140px;
+            height: 140px;
+            margin: -70px 0 0 -70px;
+        }
+        .motor-lines::before,
+        .motor-lines::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(to top, transparent, #3498db);
+            top: 0;
+            left: 50%;
+            transform-origin: bottom;
+            animation: lineRotate 2s linear infinite;
+        }
+        .motor-lines::after {
+            transform: rotate(90deg);
+            animation-direction: reverse;
+            animation-duration: 1.2s;
+        }
+
+        /* All Animations */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes glowPulse {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes checkBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        @keyframes starTwinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+        }
+        @keyframes motorSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes corePulse {
+            0% { 
+                box-shadow: 
+                    inset 0 0 30px rgba(52, 73, 94, 0.8),
+                    0 0 50px rgba(52, 152, 219, 0.6);
+            }
+            100% { 
+                box-shadow: 
+                    inset 0 0 50px rgba(52, 73, 94, 1),
+                    0 0 80px rgba(52, 152, 219, 1);
+            }
+        }
+        @keyframes innerSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(720deg) scale(1.05); }
+        }
+        @keyframes lineRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        .todo-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        .todo-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        .todo-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-container { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8em; }
+            .input-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📊 स्मार्ट विज़ुअलाइज़र (Complete Dashboard)</h1>
+            <p class="instruction">नीचे नाम और नंबर बदलें - सभी चार्ट + UI एक साथ अपडेट होंगे! ✨</p>
+        </header>
+
+        <section class="controls">
+            <div class="input-grid" id="inputContainer">
+                <!-- Dynamic inputs here -->
+            </div>
+        </section>
+
+        <div class="charts-container">
+            <!-- 1. Column Chart -->
+            <div class="chart-card">
+                <div class="chart-header bg-column">Column Chart</div>
+                <div class="chart-area" id="columnChart"></div>
+            </div>
+
+            <!-- 2. Bar Chart -->
+            <div class="chart-card">
+                <div class="chart-header bg-bar">Bar Chart</div>
+                <div class="chart-area" id="barChart"></div>
+            </div>
+
+            <!-- 3. Histogram -->
+            <div class="chart-card">
+                <div class="chart-header bg-histogram">Histogram</div>
+                <div class="chart-area" id="histogramChart" style="justify-content: stretch;"></div>
+            </div>
+
+            <!-- 4. Pie Chart -->
+            <div class="chart-card">
+                <div class="chart-header bg-pie">Pie Chart</div>
+                <div class="pie-box">
+                    <div class="pie-disk" id="pieDisk"></div>
+                    <div class="legend" id="pieLegend"></div>
+                </div>
+            </div>
+
+            <!-- 5. Line Chart -->
+            <div class="chart-card">
+                <div class="chart-header bg-line">Line Chart</div>
+                <div class="line-container" id="lineChart"></div>
+            </div>
+
+            <!-- 6. Funnel Chart -->
+            <div class="chart-card">
+                <div class="chart-header bg-funnel">Funnel Chart</div>
+                <div class="funnel-container" id="funnelChart"></div>
+            </div>
+
+            <!-- 7. Wave Chart -->
+            <div class="chart-card">
+                <div class="chart-header bg-wave">🌊 Wave Chart</div>
+                <div class="wave-container" id="waveChart"></div>
+            </div>
+
+            <!-- 8. Motor Animation (नया) -->
+            <div class="chart-card">
+                <div class="chart-header bg-motor">⚙️ Live Motor</div>
+                <div class="motor-container">
+                    <div class="motor-circle">
+                        <div class="motor-ring"></div>
+                        <div class="motor-core"></div>
+                        <div class="motor-lines"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. 3D Prism -->
+            <div class="chart-card prism-card">
+                <div class="chart-header bg-prism">✨ Movable Prism</div>
+                <div class="prism-container">
+                    <div class="prism-3d">
+                        <div class="prism-face front"></div>
+                        <div class="prism-face back"></div>
+                        <div class="prism-face right"></div>
+                        <div class="prism-face left"></div>
+                        <div class="prism-face top"></div>
+                        <div class="prism-face bottom"></div>
+                    </div>
+                    <div class="prism-glow"></div>
+                </div>
+            </div>
+
+            <!-- 10. Todo List -->
+            <div class="chart-card todo-card">
+                <div class="chart-header bg-todo">
+                    <span class="emoji">✅</span>
+                    <span>ग्राफ विश्लेषण टू-डू</span>
+                    <span class="glow-badge">7</span>
+                </div>
+                <div class="todo-container">
+                    <div class="todo-item done">
+                        <div class="todo-check">✓</div>
+                        <div class="todo-text">सबसे ऊँचा बार देखें (आइटम C = 90%)</div>
+                    </div>
+                    <div class="todo-item active">
+                        <div class="todo-check">○</div>
+                        <div class="todo-text">Pie chart में सबसे बड़ा हिस्सा check करें</div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-check">○</div>
+                        <div class="todo-text">Funnel में drop-off points identify करें</div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-check">○</div>
+                        <div class="todo-text">Line trend upward/downward है?</div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-check">○</div>
+                        <div class="todo-text">Histogram gaps analyze करें</div>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-check">○</div>
+                        <div class="todo-text">Wave pattern में peak ढूंढें</div>
+                    </div>
+                    <div class="todo-item success">
+                        <div class="todo-check">★</div>
+                        <div class="todo-text">🎉 निर्णय लें - Tension Free!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SAME Data for ALL Charts
+        const chartData = [
+            { label: 'आइटम A', value: 80, color: '#4facfe' },
+            { label: 'आइटम B', value: 45, color: '#667eea' },
+            { label: 'आइटम C', value: 90, color: '#f093fb' },
+            { label: 'आइटम D', value: 65, color: '#ff6b6b' }
+        ];
+
+        // Initialize Inputs
+        function initInputs() {
+            const container = document.getElementById('inputContainer');
+            chartData.forEach((item, i) => {
+                container.innerHTML += `
+                    <div class="input-group">
+                        <label>डेटा ${i+1}</label>
+                        <div class="input-row">
+                            <input type="text" value="${item.label}" oninput="updateData(${i}, 'label', this.value)" placeholder="नाम">
+                            <input type="number" value="${item.value}" oninput="updateData(${i}, 'value', this.value)" min="0" max="100" placeholder="नंबर">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Update ALL Charts
+        function updateData(index, key, value) {
+            if(key === 'value') value = Math.min(100, Math.max(0, parseInt(value) || 0));
+            chartData[index][key] = value;
+            drawAllCharts();
+        }
+
+        // Draw ALL Charts
+        function drawAllCharts() {
+            drawBars('columnChart', false);  // Column
+            drawBars('barChart', true);      // Bar (rounded)
+            drawBars('histogramChart', false, true); // Histogram
+            drawPie();
+            drawLine();
+            drawFunnel();
+            drawWave();
+        }
+
+        // Bar/Column/Histogram Function
+        function drawBars(containerId, isBarStyle = false, isHistogram = false) {
+            const area = document.getElementById(containerId);
+            area.innerHTML = '';
+            
+            chartData.forEach(item => {
+                const bar = document.createElement('div');
+                bar.className = 'bar-item';
+                bar.style.height = item.value + '%';
+                bar.style.backgroundColor = item.color;
+                
+                if(isHistogram) bar.style.margin = '0 1px';
+                if(isBarStyle) bar.style.borderRadius = '15px 15px 0 0';
+                
+                bar.innerHTML = `
+                    <div class="val-popup">${item.value}%</div>
+                    <div class="x-label">${item.label}</div>
+                `;
+                area.appendChild(bar);
+            });
+        }
+
+        // Pie Chart
+        function drawPie() {
+            const disk = document.getElementById('pieDisk');
+            const legend = document.getElementById('pieLegend');
+            legend.innerHTML = '';
+            
+            let total = chartData.reduce((sum, item) => sum + item.value, 0);
+            let currentAngle = 0;
+            let gradientStr = [];
+
+            chartData.forEach(item => {
+                let percent = total === 0 ? 0 : (item.value / total) * 100;
+                gradientStr.push(`${item.color} ${currentAngle}% ${currentAngle + percent}%`);
+                currentAngle += percent;
+
+                legend.innerHTML += `
+                    <div class="leg-item">
+                        <div class="dot" style="background:${item.color}"></div>
+                        ${item.label} (${Math.round(percent)}%)
+                    </div>
+                `;
+            });
+            disk.style.background = `conic-gradient(${gradientStr.join(', ')})`;
+        }
+
+        // Line Chart
+        function drawLine() {
+            const container = document.getElementById('lineChart');
+            container.innerHTML = '<svg class="lines-svg" viewBox="0 0 100 100"></svg>';
+            const svg = container.querySelector('.lines-svg');
+            
+            chartData.forEach((item, i) => {
+                const x = (i / (chartData.length - 1)) * 100;
+                const y = 100 - item.value;
+                
+                // Points
+                const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                point.setAttribute('cx', x);
+                point.setAttribute('cy', y);
+                point.setAttribute('r', 4);
+                point.setAttribute('fill', 'white');
+                point.setAttribute('stroke', item.color);
+                point.setAttribute('stroke-width', 2);
+                svg.appendChild(point);
+                
+                // Labels
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', x);
+                label.setAttribute('y', 105);
+                label.textContent = item.label;
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('font-size', 10);
+                label.setAttribute('fill', '#555');
+                svg.appendChild(label);
+            });
+        }
+
+        // Funnel Chart
+        function drawFunnel() {
+            const container = document.getElementById('funnelChart');
+            container.innerHTML = '';
+            
+            const total = chartData.reduce((sum, item) => sum + item.value, 0);
+            chartData.forEach((item, i) => {
+                const percent = total ? (item.value / total) * 100 : 0;
+                const width = Math.max(25, percent * 1.1) + '%';
+                
+                const stage = document.createElement('div');
+                stage.className = 'funnel-stage';
+                stage.innerHTML = `
+                    <div class="funnel-bar" style="width:${width};background:${item.color}">
+                        ${item.label}: ${item.value}
+                    </div>
+                `;
+                container.appendChild(stage);
+            });
+        }
+
+        // Wave Chart
+        function drawWave() {
+            const container = document.getElementById('waveChart');
+            container.innerHTML = '<div class="wave-layer"></div>';
+            const layer = container.querySelector('.wave-layer');
+            
+            chartData.forEach((item, i) => {
+                const segment = document.createElement('div');
+                segment.className = 'wave-segment';
+                segment.style.height = item.value + '%';
+                segment.style.backgroundColor = item.color;
+                segment.style.opacity = 0.9 - (i * 0.1);
+                
+                const label = document.createElement('div');
+                label.className = 'x-label';
+                label.textContent = item.label;
+                label.style.position = 'absolute';
+                label.style.bottom = '-35px';
+                label.style.left = '50%';
+                label.style.transform = 'translateX(-50%)';
+                
+                segment.appendChild(label);
+                layer.appendChild(segment);
+            });
+        }
+
+        // Start Everything
+        initInputs();
+        drawAllCharts();
+    </script>
+</body>
+</html>
