@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>momomoney</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-main: #020617;
+      --accent-1: #4f46e5;
+      --accent-2: #22c55e;
+      --accent-3: #f97316;
+      --accent-4: #a855f7;
+      --accent-5: #f59e0b;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --card-bg: rgba(15, 23, 42, 0.9);
+      --radius-xl: 24px;
+      --radius-lg: 20px;
+      --radius-pill: 999px;
+      --transition-fast: 0.25s ease;
+      --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.6);
+      --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display:flex;
+      flex-direction:column;
+      padding:16px;
+    }
+
+    .page-shell {
+      max-width:1120px;
+      width:100%;
+      margin:0 auto;
+    }
+
+    /* TOP BAR */
+    .top-bar-wrapper {
+      position:sticky;
+      top:8px;
+      z-index:50;
+      display:flex;
+      justify-content:center;
+      margin-bottom:24px;
+    }
+
+    .top-bar {
+      width:100%;
+      max-width:1120px;
+      padding:10px 18px;
+      border-radius:var(--radius-pill);
+      background:linear-gradient(
+        90deg,
+        rgba(79,70,229,0.2),
+        rgba(34,197,94,0.5),
+        rgba(249,115,22,0.3)
+      );
+      backdrop-filter:blur(18px);
+      box-shadow:var(--shadow-strong);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border:1px solid rgba(148,163,184,0.4);
+    }
+
+    .logo-wrap {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .logo-icon {
+      width:36px;
+      height:36px;
+      border-radius:16px;
+      background:radial-gradient(circle at 20% 20%, #bbf7d0, #22c55e);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 12px 30px rgba(34,197,94,0.6);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .logo-icon::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,0.4), transparent 40%);
+      opacity:0.7;
+      mix-blend-mode:screen;
+    }
+
+    .logo-icon span {
+      position:relative;
+      font-weight:800;
+      color:#052e16;
+      font-size:18px;
+    }
+
+    .logo-text {
+      display:flex;
+      align-items:baseline;
+      gap:2px;
+      font-weight:700;
+      letter-spacing:0.03em;
+    }
+
+    .logo-text .momo {
+      color:#f9fafb;
+      text-shadow:0 0 14px rgba(15,23,42,0.7);
+    }
+
+    .logo-text .money {
+      background:linear-gradient(120deg,#22c55e,#a3e635,#4f46e5);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-shadow:0 0 20px rgba(22,163,74,0.9);
+    }
+
+    nav {
+      display:flex;
+      align-items:center;
+      gap:16px;
+      font-size:14px;
+    }
+
+    nav a {
+      color:var(--text-muted);
+      text-decoration:none;
+      padding:4px 8px;
+      border-radius:999px;
+      transition:color var(--transition-fast),
+                     background-color var(--transition-fast);
+    }
+
+    nav a:hover {
+      color:var(--text-main);
+      background-color:rgba(15,23,42,0.7);
+    }
+
+    .top-controls{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:13px;
+      margin-right:10px;
+    }
+
+    .top-control-item{
+      color:var(--text-main);
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(15,23,42,0.7);
+      border:1px solid rgba(148,163,184,0.5);
+      cursor:pointer;
+      transition:background var(--transition-fast),
+                     transform var(--transition-fast),
+                     box-shadow var(--transition-fast);
+    }
+    .top-control-item:hover{
+      background:rgba(15,23,42,0.95);
+      transform:translateY(-1px);
+      box-shadow:0 10px 22px rgba(0,0,0,0.8);
+    }
+
+    .toggle-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 14px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(248,250,252,0.3);
+      background:rgba(15,23,42,0.7);
+      color:#e5e7eb;
+      cursor:pointer;
+      font-size:13px;
+      transition:transform var(--transition-fast),
+                     box-shadow var(--transition-fast),
+                     background-color var(--transition-fast);
+      box-shadow:0 8px 20px rgba(0,0,0,0.6);
+    }
+
+    .toggle-dot{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:radial-gradient(circle,#22c55e,#15803d);
+      box-shadow:0 0 10px rgba(34,197,94,0.8);
+    }
+
+    .toggle-label{
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      font-size:11px;
+      opacity:0.9;
+    }
+
+    body.compact .toggle-label::after{content:" | Inshort";}
+    body:not(.compact) .toggle-label::after{content:" | Expand";}
+
+    /* MAIN */
+    .main-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      gap:32px;
+      align-items:flex-start;
+      padding:24px 12px 24px;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-left h1{
+      font-size:clamp(32px,5vw,44px);
+      line-height:1.1;
+      margin-bottom:10px;
+    }
+
+    .hero-subtitle{
+      color:var(--text-muted);
+      max-width:460px;
+      margin-bottom:18px;
+      font-size:15px;
+    }
+
+    .cta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .btn-primary{
+      padding:10px 20px;
+      border-radius:var(--radius-pill);
+      border:none;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      background:linear-gradient(120deg,#22c55e,#4f46e5);
+      color:#020617;
+      box-shadow:0 16px 40px rgba(22,163,74,0.7);
+      transition:transform var(--transition-fast),
+                     box-shadow var(--transition-fast);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-1px);
+      box-shadow:0 22px 50px rgba(22,163,74,0.9);
+    }
+
+    .credit-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 12px;
+      border-radius:var(--radius-pill);
+      background:rgba(15,23,42,0.7);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(148,163,184,0.5);
+      font-size:12px;
+      color:var(--text-muted);
+      box-shadow:0 10px 24px rgba(0,0,0,0.7);
+    }
+
+    .credit-dot{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:radial-gradient(circle,#a855f7,#4c1d95);
+      box-shadow:0 0 12px rgba(168,85,247,0.8);
+    }
+
+    .blur-name{
+      filter:blur(1.4px);
+      text-shadow:0 0 14px rgba(248,250,252,0.7);
+      cursor:pointer;
+      transition:filter var(--transition-fast), text-shadow var(--transition-fast);
+    }
+
+    .blur-name:hover{
+      filter:blur(0);
+      text-shadow:0 0 8px rgba(94,234,212,0.8);
+    }
+
+    /* INVESTMENT ADVICE CARDS */
+    .investment-section {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .investment-card {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .investment-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent-1));
+    }
+
+    .investment-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent-2), var(--accent-5)); }
+    .investment-card:nth-child(2)::before { background: linear-gradient(90deg, var(--accent-4), var(--accent-2)); }
+    .investment-card:nth-child(3)::before { background: linear-gradient(90deg, var(--accent-3), var(--accent-4)); }
+    .investment-card:nth-child(4)::before { background: linear-gradient(90deg, var(--accent-1), var(--accent-3)); }
+    .investment-card:nth-child(5)::before { background: linear-gradient(90deg, var(--accent-5), var(--accent-1)); }
+
+    .investment-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.7);
+    }
+
+    .invest-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .invest-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #020617;
+    }
+
+    .invest-main {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .invest-cta {
+      font-size: 12px;
+      color: var(--accent-2);
+      font-weight: 600;
+      padding: 4px 10px;
+      background: rgba(34, 197, 94, 0.15);
+      border-radius: 20px;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      display: inline-block;
+      transition: all var(--transition-fast);
+    }
+
+    .invest-cta:hover {
+      background: rgba(34, 197, 94, 0.25);
+      transform: scale(1.05);
+    }
+
+    /* RIGHT – FUND & FINANCE BOX */
+    .finance-panel{
+      position:relative;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at top left,rgba(56,189,248,0.35),transparent 55%),
+        radial-gradient(circle at bottom right,rgba(34,197,94,0.4),transparent 55%),
+        rgba(15,23,42,0.97);
+      padding:18px 18px 16px;
+      border:1px solid rgba(148,163,184,0.7);
+      box-shadow:var(--shadow-strong);
+      overflow:hidden;
+    }
+
+    .finance-panel::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:radial-gradient(circle at 0 0,rgba(248,250,252,0.16),transparent 60%);
+      opacity:0.8;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+
+    .finance-header{
+      position:relative;
+      z-index:1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px;
+    }
+
+    .finance-title{
+      font-size:16px;
+      font-weight:600;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+    }
+
+    .function-btn{
+      padding:6px 14px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(56,189,248,0.8);
+      background:radial-gradient(circle at 0 0,rgba(56,189,248,0.35),rgba(15,23,42,1));
+      color:#e0f2fe;
+      cursor:pointer;
+      font-size:13px;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      box-shadow:0 12px 28px rgba(8,47,73,0.95);
+      transition:transform var(--transition-fast),
+                     box-shadow var(--transition-fast),
+                     background var(--transition-fast);
+    }
+
+    .function-btn:hover{
+      transform:translateY(-1px) scale(1.02);
+      box-shadow:0 18px 40px rgba(8,47,73,1);
+      background:radial-gradient(circle at 10% 0,rgba(56,189,248,0.5),rgba(15,23,42,1));
+    }
+
+    .function-view{
+      position:relative;
+      z-index:1;
+      margin-top:6px;
+      display:grid;
+      gap:8px;
+      font-size:13px;
+    }
+
+    .field-group{ display:grid; gap:6px; }
+
+    .field-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .field-row label{
+      width:90px;
+      font-size:13px;
+      color:var(--text-muted);
+    }
+
+    .field-row input,
+    .field-row select,
+    .feedback-textarea{
+      flex:1;
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid rgba(75,85,99,0.9);
+      background:rgba(15,23,42,0.96);
+      color:var(--text-main);
+      outline:none;
+      font-size:13px;
+    }
+
+    .field-row input:focus,
+    .field-row select:focus,
+    .feedback-textarea:focus{
+      border-color:rgba(59,130,246,0.9);
+    }
+
+    .field-caption{
+      font-size:11px;
+      color:var(--text-muted);
+    }
+
+    .summary-box{
+      margin-top:6px;
+      padding:8px 10px;
+      border-radius:16px;
+      background:rgba(15,23,42,0.95);
+      border:1px solid rgba(51,65,85,0.9);
+      display:grid;
+      gap:4px;
+      font-size:12px;
+    }
+
+    .summary-line{
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .summary-label{ color:var(--text-muted); }
+    .summary-value{ font-weight:600; }
+
+    .btn-save{
+      margin-top:8px;
+      padding:7px 16px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(34,197,94,0.9);
+      background:rgba(22,163,74,0.16);
+      color:#bbf7d0;
+      cursor:pointer;
+      font-size:13px;
+      font-weight:600;
+      transition:background var(--transition-fast),
+                     transform var(--transition-fast),
+                     box-shadow var(--transition-fast);
+    }
+
+    .btn-save:hover{
+      background:rgba(22,163,74,0.25);
+      transform:translateY(-1px);
+      box-shadow:0 14px 32px rgba(22,163,74,0.8);
+    }
+
+    .todo-list{
+      margin-top:8px;
+      padding-top:6px;
+      border-top:1px dashed rgba(75,85,99,0.9);
+      font-size:12px;
+      display:grid;
+      gap:4px;
+    }
+
+    .todo-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:4px 8px;
+      border-radius:12px;
+      background:rgba(15,23,42,0.9);
+      border:1px solid rgba(51,65,85,0.8);
+    }
+
+    .todo-main{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+
+    .todo-name{ font-weight:600; }
+    .todo-sub{ color:var(--text-muted); }
+    .todo-amount{ font-weight:600; }
+
+    .small-hint{
+      font-size:11px;
+      color:var(--text-muted);
+      margin-top:4px;
+    }
+
+    /* PRIVACY MODAL (FEEDBACK WITH DESCRIPTION) */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.8);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:60;
+      backdrop-filter:blur(10px);
+    }
+    .overlay.active{ display:flex; }
+
+    .modal{
+      width:100%;
+      max-width:420px;
+      background:rgba(15,23,42,0.98);
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,0.8);
+      box-shadow:0 24px 60px rgba(0,0,0,0.9);
+      padding:14px 16px 12px;
+      font-size:13px;
+    }
+
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+
+    .modal-title{ font-size:15px; font-weight:600; }
+    .modal-close{
+      border:none;
+      background:transparent;
+      color:var(--text-muted);
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .modal-body{ display:grid; gap:8px; }
+
+    .modal-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:var(--text-muted);
+    }
+
+    .feedback-textarea{
+      min-height:80px;
+      border-radius:14px;
+      resize:vertical;
+    }
+
+    .modal-footer{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:6px;
+    }
+
+    .btn-small{
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,0.9);
+      background:rgba(15,23,42,0.96);
+      color:var(--text-main);
+      cursor:pointer;
+      font-size:12px;
+    }
+    .btn-small.primary{
+      border-color:rgba(34,197,94,0.9);
+      background:rgba(22,163,74,0.18);
+      color:#bbf7d0;
+    }
+
+    footer{
+      padding:12px;
+      font-size:12px;
+      color:rgba(148,163,184,0.9);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      border-top:1px solid rgba(30,41,59,0.9);
+      margin-top:auto;
+    }
+
+    .footer-right{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .footer-name{
+      filter:blur(1.2px);
+      text-shadow:0 0 10px rgba(148,163,184,0.9);
+      cursor:pointer;
+      transition:filter var(--transition-fast),
+                     text-shadow var(--transition-fast);
+    }
+    .footer-name:hover{
+      filter:blur(0);
+      text-shadow:0 0 8px rgba(94,234,212,0.9);
+    }
+
+    @media(max-width:900px){ 
+      .top-controls{display:none;} 
+      .investment-section { grid-template-columns: 1fr; }
+    }
+    @media(max-width:768px){
+      body{padding:10px;}
+      .top-bar{padding:8px 12px; gap:8px;}
+      nav{display:none;}
+      .main-layout{grid-template-columns:1fr;}
+      .investment-section { gap: 12px; }
+    }
+
+
+.lower{
+  
+  background-color: #e5e7eb;
+  border-radius: 3px solid black;
+  margin: 4px;
+  padding: 5px;
+  color: red;
+  
+  
+  gap: 10px;
+
+  
+}
+
+
+
+:root {
+      --bg-main: #020617;
+      --accent-1: #4f46e5;
+      --accent-2: #22c55e;
+      --accent-red: #ef4444;
+      --text-main: #e5e7eb;
+      --card-bg: rgba(15, 23, 42, 0.9);
+      --radius-xl: 24px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 45%, #000 100%);
+      color: var(--text-main);
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* MOMOMONEY TOP BAR */
+    .top-bar {
+      padding: 15px 25px; border-radius: 50px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px); display: flex; justify-content: space-between;
+      border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 30px;
+    }
+    .logo-text { font-weight: 800; font-size: 22px; }
+    .money { color: var(--accent-2); }
+
+    /* MOMOMONEY PORTFOLIO SECTION */
+    .portfolio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+    .card { background: var(--card-bg); padding: 25px; border-radius: var(--radius-xl); border: 1px solid rgba(255,255,255,0.05); }
+
+    /* HOTEL MENU ANALYSER UI */
+    .analyser-section {
+      background: rgba(30, 41, 59, 0.5); padding: 40px; border-radius: var(--radius-xl);
+      border: 1px solid var(--accent-1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .analyser-title { font-size: 26px; color: var(--accent-2); margin-bottom: 25px; text-align: center; }
+
+    .step-box { display: none; text-align: center; }
+    .step-box.active { display: block; animation: fadeIn 0.5s; }
+
+    .custom-input {
+      width: 80%; padding: 15px; background: #000; border: 1px solid #444;
+      border-radius: 12px; color: #fff; font-size: 16px; margin: 20px 0;
+    }
+
+    .btn-action {
+      background: var(--accent-1); color: #fff; border: none; padding: 12px 35px;
+      border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s;
+    }
+    .btn-action:hover { transform: scale(1.05); background: #6366f1; }
+
+    /* RESULT STYLING */
+    .food-result { font-size: 45px; font-weight: 900; background: linear-gradient(to right, #22c55e, #a3e635); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0; display: block; }
+
+    /* RED FOOTER ROW */
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } };
+
+
+    /* Image Upload Box Styling */
+    .image-upload-area {
+        width: 100%;
+        height: 220px;
+        border: 2px dashed rgba(79, 70, 229, 0.4);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.4s;
+        background: rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+    .image-upload-area:hover {
+        border-color: var(--accent-1);
+        box-shadow: 0 0 25px rgba(79, 70, 229, 0.3);
+        background: rgba(79, 70, 229, 0.05);
+    }
+    .upload-icon { font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+
+    /* Editor Styling */
+    .font-sidebar { display: flex; flex-direction: column; gap: 10px; }
+    .font-sidebar button {
+        padding: 10px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.3s;
+    }
+    .font-sidebar button:hover { background: var(--accent-1); transform: scale(1.05); }
+
+    .custom-textarea {
+        flex: 1;
+        background: rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 15px;
+        color: #fff;
+        font-size: 16px;
+        resize: none;
+        min-height: 140px;
+        outline: none;
+        transition: 0.3s;
+    }
+    .custom-textarea:focus { border-color: var(--accent-2); box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+
+    /* Button Styling */
+    .generate-btn {
+        width: 100%;
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 50px;
+        border: none;
+        background: linear-gradient(90deg, var(--accent-1), var(--accent-4));
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+        transition: 0.3s;
+    }
+    .generate-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(168, 85, 247, 0.6); }
+
+    /* Final Result Card Animation */
+    .result-card {
+        background: #0f172a;
+        border-radius: 25px;
+        padding: 20px;
+        border: 1px solid var(--accent-2);
+        animation: fadeInScale 0.6s ease-out forwards;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.9) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="page-shell">
+  <!-- TOP BAR -->
+  <div class="top-bar-wrapper">
+    <header class="top-bar">
+      <div class="logo-wrap">
+        <div class="logo-icon"><span>M</span></div>
+        <div class="logo-text">
+         <span class="momo">momo</span><span class="money">Money</span>
+        </div>
+      </div>
+
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#fund">Fund & Finance</a>
+      </nav>
+
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="top-controls">
+          <span class="top-control-item" id="bankSpan">Bank</span>
+          <span class="top-control-item" id="privacySpan">Privacy</span>
+          <span class="top-control-item" id="settingsSpan">Settings</span>
+        </div>
+        <button class="toggle-btn" id="modeToggle">
+          <span class="toggle-dot"></span>
+          <span class="toggle-label"></span>
+        </button>
+      </div>
+    </header>
+  </div>
+
+  <!-- MAIN -->
+  <main id="home">
+    <div class="main-layout">
+      <!-- LEFT HERO -->
+      <section class="hero-left">
+        <h1>Control your money in one place.</h1>
+        <p class="hero-subtitle">
+          Momomoney में user अपना नाम, bank और fund details डालकर smart तरीके से current amount, deposit और withdrawal manage कर सकता है. सब कुछ bankStorage में save होता है.
+        </p>
+        <div class="cta-row">
+          <button class="btn-primary">Get Started</button>
+        </div>
+        <div class="credit-chip">
+          <span class="credit-dot"></span>
+          <span>Designed by <span class="blur-name">Sushant Applegate</span></span>
+        </div>
+
+        <!-- INVESTMENT ADVICE SECTION -->
+        <div class="investment-section">
+          <div class="investment-card">
+            <div class="invest-title">
+              <span class="invest-icon" style="background: radial-gradient(circle, var(--accent-2), #15803d);">1</span>
+              Emergency Fund बनाओ
+            </div>
+            <div class="invest-main">
+              पहले 6 महीने के खर्च का emergency fund बना लो. SBI/RD में ₹5000/month डालो. Bank में पैसे रखने से interest नहीं मिलता.
+            </div>
+            <div class="invest-cta">शुरू करो →</div>
+          </div>
+
+          <div class="investment-card">
+            <div class="invest-title">
+              <span class="invest-icon" style="background: radial-gradient(circle, var(--accent-5), #d97706);">2</span>
+              SIP शुरू करो
+            </div>
+            <div class="invest-main">
+              हर महीने ₹2000 mutual fund में SIP डालो. 10 साल बाद ₹5 लाख+ बनेगा. Bank FD से 3x ज्यादा return.
+            </div>
+            <div class="invest-cta">SIP Calculator</div>
+          </div>
+
+          <div class="investment-card">
+            <div class="invest-title">
+              <span class="invest-icon" style="background: radial-gradient(circle, var(--accent-4), #9333ea);">3</span>
+              Gold खरीदो
+            </div>
+            <div class="invest-main">
+              हर महीने ₹1000 gold में डालो. 5 साल में double हो जाएगा. Digital gold apps use करो, physical gold से बेहतर.
+            </div>
+            <div class="invest-cta">Gold खरीदो</div>
+          </div>
+
+          <div class="investment-card">
+            <div class="invest-title">
+              <span class="invest-icon" style="background: radial-gradient(circle, var(--accent-1), #3730a3);">4</span>
+              PPF खोलो
+            </div>
+            <div class="invest-main">
+              हर साल ₹1.5 लाख PPF में डालो. 15 साल बाद tax-free ₹50 लाख+. Bank saving से 7x बेहतर.
+            </div>
+            <div class="invest-cta">PPF Calculator</div>
+          </div>
+
+          <div class="investment-card">
+            <div class="invest-title">
+              <span class="invest-icon" style="background: radial-gradient(circle, var(--accent-3), #ea580c);">5</span>
+              Insurance लो
+            </div>
+            <div class="invest-main">
+              ₹500/month term insurance लो. Family को future secure करो. Bank में पैसे रखने से protection नहीं मिलता.
+            </div>
+            <div class="invest-cta">Policy देखो</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT – FUND & FINANCE FUNCTION BOX -->
+      <section class="finance-panel" id="fund">
+        <div class="finance-header">
+          <h2 class="finance-title">FUND & FINANCE</h2>
+          <button class="function-btn" id="functionBtn">
+            <span>Function</span>
+          </button>
+        </div>
+
+        <div class="function-view" id="functionView">
+          <!-- USER + BANK -->
+          <div class="field-group">
+            <div class="field-row">
+              <label for="userName">User name</label>
+              <input id="userName" type="text" placeholder="अपना नाम लिखो" />
+            </div>
+            <div class="field-row">
+              <label for="bankName">Bank</label>
+              <select id="bankName">
+                <option value="">Select bank</option>
+                <option>HDFC Bank</option>
+                <option>SBI</option>
+                <option>ICICI Bank</option>
+                <option>Axis Bank</option>
+                <option>Kotak Bank</option>
+              </select>
+            </div>
+            <p class="field-caption">
+              Bank span click करने पर भी यही box focus होगा और यहां user name + bank दिखेंगे.
+            </p>
+          </div>
+
+          <!-- AMOUNT INPUTS (CURRENT EDITABLE) -->
+          <div class="field-group">
+            <div class="field-row">
+              <label for="currentAmount">Current amount</label>
+              <input id="currentAmount" type="number" placeholder="₹ current amount" />
+            </div>
+            <div class="field-row">
+              <label for="depositInput">Deposit</label>
+              <input id="depositInput" type="number" placeholder="₹ deposit" />
+            </div>
+            <div class="field-row">
+              <label for="withdrawInput">Withdrawal</label>
+              <input id="withdrawInput" type="number" placeholder="₹ withdrawal" />
+            </div>
+            <p class="field-caption">
+              Current amount को तुम manually भी set कर सकते हो, deposit/withdrawal से balance auto update होगा.
+            </p>
+          </div>
+
+          <!-- SUMMARY -->
+          <div class="summary-box">
+            <div class="summary-line">
+              <span class="summary-label">Total deposit</span>
+              <span class="summary-value" id="totalDepositText">₹ 0</span>
+            </div>
+            <div class="summary-line">
+              <span class="summary-label">Total withdrawal</span>
+              <span class="summary-value" id="totalWithdrawText">₹ 0</span>
+            </div>
+            <div class="summary-line">
+              <span class="summary-label">Current balance</span>
+              <span class="summary-value" id="balanceText">₹ 0</span>
+            </div>
+          </div>
+
+          <!-- TO‑DO STYLE ROW -->
+          <div class="todo-list" id="todoList"></div>
+
+          <button class="btn-save" id="saveBtn">Save to bankStorage</button>
+          <p class="small-hint">
+            Save दबाने पर bankStorage के अंदर नाम, bank, base amount, total deposit और withdrawal सब store होगा. Refresh के बाद भी यही data वापस दिखेगा.
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 momomoney. All rights reserved.</span>
+    <div class="footer-right">
+      <span>Crafted by</span>
+      <span class="footer-name">Sushant Applegate</span>
+    </div>
+  </footer>
+</div>
+
+<!-- PRIVACY / FEEDBACK MODAL -->
+<div class="overlay" id="privacyOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Privacy & Feedback</h3>
+      <button class="modal-close" id="privacyClose">×</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-label">Privacy info</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+          Momomoney सिर्फ browser के अंदर bankStorage का use कर रहा है. तुम्हारा data sirf तुम्हारे device पर रहता है, server पर नहीं जाता.
+        </p>
+      </div>
+      <div>
+        <div class="modal-label">Feedback (description)</div>
+        <textarea id="feedbackInput" class="feedback-textarea" placeholder="अपना feedback / idea detail में लिखो..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-small" id="privacyCancel">Close</button>
+      <button class="btn-small primary" id="feedbackSend">Send feedback</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="lower">
+  <footer>
+    
+    <h1 style="color: red;">X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X  X X X X X X X X X X X X X X X X</h1>
+  </footer>
+</div>
+
+
+
+
+
+
+
+
+
+    <div class="card">
+      <h3 style="color:var(--accent-1)">AI Insights</h3>
+      <p style="font-size: 14px; color: #9ca3af;">2026 में निवेश के बेहतरीन अवसर खोजें।</p>
+    </div>
+  </div>
+
+  <!-- 2. HOTEL MENU ANALYSER SECTION -->
+  <section class="analyser-section">
+    <h2 class="analyser-title">🍽️ AI Hotel Menu Analyser</h2>
+    
+    <div id="ai-steps">
+      <!-- Step 1 -->
+      <div class="step-box active" id="step1">
+        <label>अभी कौन सा समय (Time) हो रहा है?</label><br>
+        <input type="text" id="time" class="custom-input" placeholder="उदा. 2:00 PM">
+        <br><button class="btn-action" onclick="nextStep(2)">Next</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-box" id="step2">
+        <label>अभी आपकी क्या चॉइस है?</label><br>
+        <input type="text" id="choice" class="custom-input" placeholder="मसालेदार या हल्का?">
+        <br><button class="btn-action" onclick="nextStep(3)">Next</button>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-box" id="step3">
+        <label>मेन्यू के आइटम लिखें (कम से कम 4, कॉमा के साथ):</label><br>
+        <input type="text" id="menu" class="custom-input" placeholder="Paneer, Dosa, Pasta, Salad...">
+        <br><button class="btn-action" onclick="nextStep(4)">Next</button>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-box" id="step4">
+        <label>आज सुबह आपने क्या खाया था?</label><br>
+        <input type="text" id="morning" class="custom-input" placeholder="सुबह का नाश्ता...">
+        <br><button class="btn-action" onclick="showResult()">Analyse Food</button>
+      </div>
+
+      <!-- Result Result -->
+      <div class="step-box" id="resultStep">
+        <p>AI Recommendation (Based on Morning Diet):</p>
+        <span id="foodResult" class="food-result"></span>
+        <p id="details" style="font-size: 14px; opacity: 0.8;"></p>
+        <button class="btn-action" style="margin-top: 20px; background:#444;" onclick="location.reload()">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. RED FOOTER ROW -->
+ 
+</div>
+
+<div>
+  <footer>
+    <h1 style="text-align: center;color: aqua; background-color: #48ca77;margin: 5px;padding: 10px;gap: 15px;">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </h1>
+  </footer>
+
+</div>
+
+<div>
+  <h2 style="text-align: center;color: rgb(193, 95, 60);background-color: #5853bd;text-decoration: dotted;font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-weight: bolder;">Decorative___Writer system</h2>
+</div>
+<div class="writer-container" style="margin-top: 40px; padding: 24px; background: rgba(15, 23, 42, 0.6); border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+    
+    <h2 style="font-size: 20px; color: var(--accent-2); margin-bottom: 20px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;">
+        <span style="width: 30px; height: 2px; background: var(--accent-2);"></span>
+        DECORATIVE WRITER
+    </h2>
+
+    <!-- Photo Upload Box -->
+    <div id="drop-zone" class="image-upload-area">
+        <input type="file" id="file-input" hidden accept="image/*">
+        <div id="preview-container" class="preview-content">
+            <div class="upload-icon">🖼️</div>
+            <p style="color: var(--text-muted); font-size: 14px;">अपनी फोटो यहाँ अपलोड करें</p>
+        </div>
+    </div>
+
+    <!-- Description & Font Controls -->
+    <div class="editor-section" style="margin-top: 20px; display: flex; gap: 15px;">
+        <div class="font-sidebar">
+            <button onclick="applyStyle('cursive')" style="font-family: 'cursive';">Style 1</button>
+            <button onclick="applyStyle('serif')" style="font-family: 'serif';">Style 2</button>
+            <button onclick="applyStyle('monospace')" style="font-family: 'monospace';">Style 3</button>
+            <button onclick="applyStyle('italic')" style="font-style: italic;">Style 4</button>
+        </div>
+        
+        <textarea id="user-text" class="custom-textarea" placeholder="यहाँ अपनी कहानी लिखें..."></textarea>
+    </div>
+
+    <!-- Generate Button -->
+    <button class="generate-btn" onclick="generateCreativePage()">
+        ✨ Create Magic Post
+    </button>
+
+    <!-- Result Page Area -->
+    <div id="final-result-page" style="margin-top: 30px;"></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  // Expand / Inshort visual
+  const bodyEl = document.body;
+  const modeToggle = document.getElementById("modeToggle");
+  function setMode(compact){ compact?bodyEl.classList.add("compact"):bodyEl.classList.remove("compact"); }
+  setMode(false);
+  modeToggle.addEventListener("click",()=>setMode(!bodyEl.classList.contains("compact")));
+
+  // BANK STORAGE LOGIC
+  const STORAGE_KEY = "bankStorage";
+
+  const userNameInput = document.getElementById("userName");
+  const bankNameSelect = document.getElementById("bankName");
+  const currentAmountInput = document.getElementById("currentAmount");
+  const depositInput = document.getElementById("depositInput");
+  const withdrawInput = document.getElementById("withdrawInput");
+  const totalDepositText = document.getElementById("totalDepositText");
+  const totalWithdrawText = document.getElementById("totalWithdrawText");
+  const balanceText = document.getElementById("balanceText");
+  const todoList = document.getElementById("todoList");
+  const saveBtn = document.getElementById("saveBtn");
+  const functionBtn = document.getElementById("functionBtn");
+  const functionView = document.getElementById("functionView");
+
+  function loadBankState(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      currentAmountInput.value = "";
+      totalDepositText.textContent = "₹ 0";
+      totalWithdrawText.textContent = "₹ 0";
+      balanceText.textContent = "₹ 0";
+      todoList.innerHTML = "";
+      return;
+    }
+    try{
+      const s = JSON.parse(raw);
+      userNameInput.value = s.name || "";
+      bankNameSelect.value = s.bank || "";
+      currentAmountInput.value = s.baseAmount || 0;
+      const totalDep = Number(s.totalDeposit || 0);
+      const totalW = Number(s.totalWithdraw || 0);
+      const balance = Number(s.baseAmount || 0) + totalDep - totalW;
+
+      totalDepositText.textContent = "₹ " + totalDep;
+      totalWithdrawText.textContent = "₹ " + totalW;
+      balanceText.textContent = "₹ " + balance;
+
+      todoList.innerHTML = "";
+      if (s.name || s.bank){
+        const item = document.createElement("div");
+        item.className = "todo-item";
+        const left = document.createElement("div");
+        left.className = "todo-main";
+        const n = document.createElement("span");
+        n.className = "todo-name";
+        n.textContent = s.name || "User";
+        const sub = document.createElement("span");
+        sub.className = "todo-sub";
+        sub.textContent = (s.bank || "No bank") +
+         " • Deposit: ₹" + totalDep + " • Withdraw: ₹" + totalW;
+        left.appendChild(n);
+        left.appendChild(sub);
+        const right = document.createElement("span");
+        right.className = "todo-amount";
+        right.textContent = "₹ " + balance;
+        item.appendChild(left);
+        item.appendChild(right);
+        todoList.appendChild(item);
+      }
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  function saveBankState(extraDeposit, extraWithdraw){
+    let s = { name:"", bank:"", baseAmount:0, totalDeposit:0, totalWithdraw:0 };
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      try{ s = Object.assign(s, JSON.parse(raw)); }catch(e){}
+    }
+    const name = userNameInput.value.trim() || s.name || "User";
+    const bank = bankNameSelect.value || s.bank || "";
+    const baseAmount = Number(currentAmountInput.value || 0);
+
+    const addDep = Number(extraDeposit || 0);
+    const addW = Number(extraWithdraw || 0);
+
+    s.name = name;
+    s.bank = bank;
+    s.baseAmount = baseAmount;
+    s.totalDeposit = Number(s.totalDeposit || 0) + (addDep>0?addDep:0);
+    s.totalWithdraw = Number(s.totalWithdraw || 0) + (addW>0?addW:0);
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    loadBankState();
+  }
+
+  loadBankState();
+
+  saveBtn.addEventListener("click",()=>{
+    const dep = depositInput.value.trim();
+    const wd = withdrawInput.value.trim();
+    saveBankState(dep, wd);
+    depositInput.value = "";
+    withdrawInput.value = "";
+    alert("Bank storage saved for " + (userNameInput.value || "User"));
+  });
+
+  // Function button – focus / highlight fund box
+  functionBtn.addEventListener("click",()=>{
+    functionView.scrollIntoView({behavior:"smooth", block:"center"});
+    functionView.style.transition = "box-shadow 0.4s ease";
+    functionView.style.boxShadow = "0 0 0 1px rgba(56,189,248,0.9)";
+    setTimeout(()=>{ functionView.style.boxShadow = "none"; },600);
+  });
+
+  // Bank span – same fund box focus
+  document.getElementById("bankSpan").addEventListener("click",()=>{
+    document.getElementById("fund").scrollIntoView({behavior:"smooth",block:"center"});
+    functionView.style.transition = "box-shadow 0.4s ease";
+    functionView.style.boxShadow = "0 0 0 1px rgba(34,197,94,0.9)";
+    setTimeout(()=>{ functionView.style.boxShadow = "none"; },600);
+  });
+
+  // Privacy with feedback description
+  const privacySpan = document.getElementById("privacySpan");
+  const privacyOverlay = document.getElementById("privacyOverlay");
+  const privacyClose = document.getElementById("privacyClose");
+  const privacyCancel = document.getElementById("privacyCancel");
+  const feedbackSend = document.getElementById("feedbackSend");
+  const feedbackInput = document.getElementById("feedbackInput");
+
+  function openPrivacy(){ privacyOverlay.classList.add("active"); }
+  function closePrivacy(){ privacyOverlay.classList.remove("active"); }
+
+  privacySpan.addEventListener("click", openPrivacy);
+  privacyClose.addEventListener("click", closePrivacy);
+  privacyCancel.addEventListener("click", closePrivacy);
+
+  feedbackSend.addEventListener("click", ()=>{
+    const text = feedbackInput.value.trim();
+    if(!text){
+      alert("Please write some feedback in the description.");
+      return;
+    }
+    alert("Thanks for your feedback! (demo mode)");
+    feedbackInput.value = "";
+    closePrivacy();
+  });
+
+  // Settings span – inspect hint
+  document.getElementById("settingsSpan").addEventListener("click",()=>{
+    alert("Settings: Developer ke liye hint – Right click → Inspect ya Ctrl+Shift+I se code देख सकते हो.");
+  });
+
+
+
+  function nextStep(s) {
+    document.querySelectorAll('.step-box').forEach(b => b.classList.remove('active'));
+    document.getElementById('step' + s).classList.add('active');
+  }
+
+  function showResult() {
+    const time = document.getElementById('time').value;
+    const menu = document.getElementById('menu').value.split(',');
+    const morning = document.getElementById('morning').value;
+    
+    // Logic: 3rd Index (4th item)
+    let selectedFood = menu[3] ? menu[3].trim() : (menu[0] ? menu[0].trim() : "Healthy Meal");
+
+    document.querySelectorAll('.step-box').forEach(b => b.classList.remove('active'));
+    document.getElementById('resultStep').classList.add('active');
+
+    document.getElementById('foodResult').innerText = selectedFood;
+    document.getElementById('details').innerHTML = 
+      `अभी ${time} है। आपने सुबह <b>${morning}</b> खाया था, <br> इसलिए AI आपके मेन्यू से 3rd index (<b>${selectedFood}</b>) की सलाह देता है।`;
+  }
+
+
+const box = document.getElementById('drop-zone');
+    const input = document.getElementById('file-input');
+    const preview = document.getElementById('preview-container');
+    const textarea = document.getElementById('user-text');
+    let imageSrc = "";
+
+    box.onclick = () => input.click();
+
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                imageSrc = event.target.result;
+                preview.innerHTML = `<img src="${imageSrc}" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    function applyStyle(style) {
+        if (style === 'italic') {
+            textarea.style.fontStyle = 'italic';
+            textarea.style.fontFamily = 'inherit';
+        } else {
+            textarea.style.fontStyle = 'normal';
+            textarea.style.fontFamily = style;
+        }
+    }
+
+    function generateCreativePage() {
+        const textValue = textarea.value;
+        const resultArea = document.getElementById('final-result-page');
+
+        if (!textValue && !imageSrc) {
+            alert("कृपया फोटो चुनें और कुछ लिखें!");
+            return;
+        }
+
+        resultArea.innerHTML = `
+            <div class="result-card">
+                <div style="margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--accent-2); font-size:12px; font-weight:bold;">MOMOMONEY CREATIVE</span>
+                    <span style="color:var(--text-muted); font-size:10px;">${new Date().toLocaleDateString()}</span>
+                </div>
+                ${imageSrc ? `<img src="${imageSrc}" style="width:100%; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.1);">` : ''}
+                <p style="font-family:${textarea.style.fontFamily}; font-style:${textarea.style.fontStyle}; font-size:20px; color:#fff; line-height:1.6; text-align:center;">
+                    "${textValue}"
+                </p>
+            </div>
+        `;
+        resultArea.scrollIntoView({ behavior: 'smooth' });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
