@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dockyard Fitness - Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #24d209;
+            font-size: 2.5rem;
+        }
+
+        .simulation-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            border: 2px solid #24d209;
+        }
+
+        /* एनिमेटेड विजुअल बॉक्स (Character Box) */
+        .character-box {
+            width: 150px;
+            height: 150px;
+            background-color: #24d209;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: 0 0 20px #24d209;
+        }
+
+        /* जब एक्सरसाइज चलेगी तब यह एनिमेट (पल्स) होगा */
+        .active-animation {
+            animation: workoutPulse 1s infinite alternate;
+        }
+
+        @keyframes workoutPulse {
+            from { transform: scale(1); box-shadow: 0 0 20px #24d209; }
+            to { transform: scale(1.1); box-shadow: 0 0 35px #24d209; }
+        }
+
+        .controls select, .controls button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            margin: 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .controls select {
+            background: #fff;
+            color: #333;
+        }
+
+        .controls button {
+            background-color: #24d209;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #1eb007;
+        }
+
+        .timer {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #cddd18;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #aaa;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: #24d209;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Dockyard Fitness Simulation 🏋️‍♂️</h1>
+    <p>Select an exercise and start your virtual workout simulation!</p>
+
+    <div class="simulation-container">
+        <!-- एनिमेटेड कैरेक्टर/इमोजी बॉक्स -->
+        <div class="character-box" id="avatar">🧍</div>
+
+        <!-- टाइमर डिस्प्ले -->
+        <div class="timer" id="timerDisplay">00:10</div>
+        <p class="status" id="statusText">Ready to sweat?</p>
+
+        <!-- कंट्रोल्स -->
+        <div class="controls">
+            <select idsim="exerciseSelect" id="exerciseSelect">
+                <option value="pushup">Pushups Simulation 🏃‍♂️</option>
+                <option value="plank">Plank Endurance 🧘</option>
+                <option value="squat">Squat Power 🦵</option>
+            </select>
+            <br>
+            <button id="startBtn" onclick="startSimulation()">Start Workout</button>
+        </div>
+
+        <a href="/" class="back-btn">← Go Back to Main Dashboard</a>
+    </div>
+
+    <!-- शुद्ध जावास्क्रिप्ट कोड (Pure JS Logic) -->
+    <script>
+        let timer;
+        let timeLeft = 10; // हर एक एक्सरसाइज 10 सेकंड चलेगी
+        let isRunning = false;
+
+        // एक्सरसाइज के हिसाब से इमोजी बदलने के लिए मैपिंग
+        const exerciseIcons = {
+            pushup: "🤸",
+            plank: "🧘",
+            squat: "🏋️"
+        };
+
+        function startSimulation() {
+            if (isRunning) return; // अगर पहले से चल रहा है तो दोबारा क्लिक न हो
+
+            isRunning = true;
+            timeLeft = 10; // टाइमर रीसेट करें
+            
+            const selectedExercise = document.getElementById('exerciseSelect').value;
+            const avatar = document.getElementById('avatar');
+            const timerDisplay = document.getElementById('timerDisplay');
+            const statusText = document.getElementById('statusText');
+            const startBtn = document.getElementById('startBtn');
+
+            // एनीमेशन चालू करें और आइकॉन बदलें
+            avatar.textContent = exerciseIcons[selectedExercise];
+            avatar.classList.add('active-animation');
+            startBtn.disabled = true;
+            startBtn.style.opacity = "0.5";
+            statusText.textContent = `Performing ${selectedExercise.toUpperCase()}... Keep Going!`;
+
+            // टाइमर इंटरवल शुरू करें
+            timer = setInterval(function() {
+                timeLeft--;
+                
+                // स्क्रीन पर समय अपडेट करें
+                timerDisplay.textContent = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+
+                // जब टाइम खत्म हो जाए
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    isRunning = false;
+                    avatar.classList.remove('active-animation');
+                    avatar.textContent = "🏆"; // जीत का सिंबल
+                    statusText.textContent = "Workout Completed! Great Job!";
+                    timerDisplay.textContent = "00:00";
+                    startBtn.disabled = false;
+                    startBtn.style.opacity = "1";
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>
